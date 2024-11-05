@@ -99,7 +99,31 @@
 
     function exportToExcel() {
         const table = document.getElementById("productTable");
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Product Purchase" });
+        const wb = XLSX.utils.book_new();
+        const wsData = [];
+        
+        // Get headers
+        const headers = [];
+        table.querySelectorAll("th").forEach(th => headers.push(th.innerText));
+        wsData.push(headers);
+
+        // Get rows
+        const rows = table.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            const rowData = [];
+            row.querySelectorAll("td").forEach((td, index) => {
+                if (index === 5) { // Serial Number input field
+                    const serialInput = td.querySelector("input");
+                    rowData.push(serialInput.value); // Get the value from the input
+                } else {
+                    rowData.push(td.innerText); // Get the static cell value
+                }
+            });
+            wsData.push(rowData);
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, "Product Purchase");
         XLSX.writeFile(wb, "ProductPurchase.xlsx");
     }
 </script>
