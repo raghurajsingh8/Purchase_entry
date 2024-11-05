@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Product Table</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .input-container {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Product Purchase Table</h2>
+
+<div class="input-container">
+    <label for="quantity">Enter Quantity:</label>
+    <input type="number" id="quantity" min="1" required>
+</div>
+<div class="input-container">
+    <label for="productName">Product Name:</label>
+    <input type="text" id="productName" required>
+</div>
+<div class="input-container">
+    <label for="productVersion">Product Version:</label>
+    <input type="text" id="productVersion" required>
+</div>
+<div class="input-container">
+    <label for="date">Date and Time:</label>
+    <input type="datetime-local" id="date" required>
+</div>
+<div class="input-container">
+    <label for="verifiedBy">Verified By:</label>
+    <input type="text" id="verifiedBy" required>
+</div>
+
+<button onclick="createRows()">Create Rows</button>
+
+<table id="productTable" style="display: none;">
+    <thead>
+        <tr>
+            <th>Purchase</th>
+            <th>Verified By</th>
+            <th>Product Name</th>
+            <th>Product Version</th>
+            <th>Date</th>
+            <th>Serial Number</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<button id="exportBtn" style="display: none;" onclick="exportToExcel()">Export to Excel</button>
+
+<script>
+    function createRows() {
+        const quantity = document.getElementById("quantity").value;
+        const productName = document.getElementById("productName").value;
+        const productVersion = document.getElementById("productVersion").value;
+        const date = document.getElementById("date").value;
+        const verifiedBy = document.getElementById("verifiedBy").value;
+
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = ""; // Clear previous rows
+
+        for (let i = 0; i < quantity; i++) {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${i + 1}</td>
+                <td>${verifiedBy}</td>
+                <td>${productName}</td>
+                <td>${productVersion}</td>
+                <td>${date}</td>
+                <td><input type="text" placeholder="Enter Serial Number" required></td>
+                <td>1</td>
+            `;
+            tableBody.appendChild(row);
+        }
+
+        document.getElementById("productTable").style.display = "table";
+        document.getElementById("exportBtn").style.display = "block";
+    }
+
+    function exportToExcel() {
+        const table = document.getElementById("productTable");
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Product Purchase" });
+        XLSX.writeFile(wb, "ProductPurchase.xlsx");
+    }
+</script>
+
+</body>
+</html>
